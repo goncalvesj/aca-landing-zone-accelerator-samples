@@ -10,7 +10,7 @@ This scenario does not deploy Azure Container Registry as the sample application
 
 By the end of this deployment guide, you would have deployed an "internal environment" Azure Container Apps cluster with the additional services referenced above.
 
-![Architectural diagram showing an Azure Container Apps deployment in a spoke virtual network.](../../docs/media/acaInternal/aca-internal.jpg)
+![Architectural diagram showing an Azure Container Apps deployment in a spoke virtual network.](../../docs/media/acaInternalAppcpgstr/aca-internal-appcpgstr.jpg)
 
 ## Core architecture components
 
