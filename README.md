@@ -1,12 +1,12 @@
-# Azure Container Apps landing zone accelerator
+# Azure Container Apps landing zone accelerator Samples
+
+## Landing zone accelerator overview
 
 Azure landing zone accelerators provide architectural guidance, reference architectures, reference implementations, and automation to deploy workload platforms on Azure at scale. They are aligned with industry proven practices, such as those presented in [Azure landing zones](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) guidance in the Cloud Adoption Framework.
 
 This Azure Container Apps landing zone accelerator represents the strategic design path and target technical state for an Azure Container Apps deployment, owned and operated by an workload team.
 
 This repository provides packaged guidance for customer scenarios, reference architecture, reference implementation, tooling, design area guidance, sample application deployed after provisioning the infrastructure using the accelerator. The architectural approach can be used as design guidance for greenfield implementation and as an assessment for brownfield customers already using containerized apps.
-
-![An architecture diagram representing a typical Azure Container Apps architecture.](./docs/media/acaInternal/aca-internal.jpg)
 
 ## :mag: Design areas
 
@@ -19,12 +19,17 @@ The architecture is considered across four key design areas. Please review them 
 
 ## :rocket: Reference implementation
 
-This repo contains the Azure landing zone accelerator's reference implementations, all with supporting *Infrastructure as Code* artifacts. The scenarios covered are:
+This repo contains the Azure landing zone accelerator's reference implementations, all with supporting *Infrastructure as Code* artifacts.
+
+Different workloads will have different requirements, different services, etc. and the goal with this repository is to provide a set of sample scenarios that can be used as a starting point, based on the secure baseline implementation.
+
+The scenarios covered are:
 
 :arrow_forward: [Scenario 1: Azure Container Apps - Internal environment secure baseline](scenarios/aca-internal/README.md)
 
-*More reference implementation scenarios will be added as they become available.*
+:arrow_forward: [Scenario 2: Azure Container Apps - Internal environment secure baseline with ACA Jobs](scenarios/aca-internal/bicep/sample-apps/jobs/README.md)
 
+:arrow_forward: [Scenario 3: Azure Container Apps - Internal environment with App Config, Azure PostgreSQL, and Azure Storage](scenarios/aca-internal-appcpgstr/README.md)
 
 > :information_source: **NOTE**: The official Terraform AzureRM provider does not currently support the new [Azure Container Apps workload profiles, more networking features, and jobs](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/generally-available-azure-container-apps-workload-profiles-more/ba-p/3913345). The Terraform implementation in the main branch is referring to the older [V1.1.0 implementation](https://github.com/Azure/aca-landing-zone-accelerator/tree/V1.1.0/scenarios/aca-internal/terraform), which is not using workload profiles therefore the egress network traffic is not secured through an Azure Firewall. 
 > For a Terraform implementation using the [AzAPI provider](https://learn.microsoft.com/azure/developer/terraform/overview-azapi-provider) of the Secure Baseline Scenario, please check out the [udr-implementation-azapi branch](https://github.com/Azure/aca-landing-zone-accelerator/tree/feature/udr-implementation-azapi/scenarios/aca-internal/terraform). Once the AzureRM provider provides support for workload profiles in Azure Container Apps, a full Terraform implementation using the AzureRM provider will be become available in the main branch. 
