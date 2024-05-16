@@ -29,6 +29,13 @@ param vnetAddressPrefixes array
 @description('Enable or disable the creation of the Azure Bastion.')
 param enableBastion bool
 
+@description('Bastion sku, default is basic')
+@allowed([
+  'Basic'
+  'Standard'
+])
+param bastionSku string = 'Basic'
+
 @description('CIDR to use for the Azure Bastion subnet.')
 param bastionSubnetAddressPrefix string
 
@@ -55,6 +62,13 @@ param vmAdminPassword string
 @description('The SSH public key to use for the virtual machine.')
 @secure()
 param vmLinuxSshAuthorizedKeys string
+
+@description('Type of authentication to use on the Virtual Machine. SSH key is recommended.')
+@allowed([
+  'sshPublicKey'
+  'password'
+])
+param vmAuthenticationType string = 'password'
 
 @allowed(['linux', 'windows', 'none'])
 param vmJumpboxOSType string = 'none'
@@ -140,6 +154,7 @@ module hub 'modules/01-hub/deploy.hub.bicep' = {
     workloadName: workloadName
     vnetAddressPrefixes: vnetAddressPrefixes
     enableBastion: enableBastion
+    bastionSku:bastionSku
     bastionSubnetAddressPrefix: bastionSubnetAddressPrefix    
     azureFirewallSubnetAddressPrefix: azureFirewallSubnetAddressPrefix
     azureFirewallSubnetManagementAddressPrefix: azureFirewallSubnetManagementAddressPrefix
@@ -174,6 +189,7 @@ module spoke 'modules/02-spoke/deploy.spoke.bicep' = {
     vmLinuxSshAuthorizedKeys: vmLinuxSshAuthorizedKeys
     vmJumpboxOSType: vmJumpboxOSType
     vmJumpBoxSubnetAddressPrefix: vmJumpBoxSubnetAddressPrefix
+    vmAuthenticationType: vmAuthenticationType
     deployAzurePolicies: deployAzurePolicies
   }
 }
@@ -253,6 +269,9 @@ module applicationGateway 'modules/06-application-gateway/deploy.app-gateway.bic
 @description('The resource ID of hub virtual network.')
 output hubVNetId string = hub.outputs.hubVNetId
 
+@description('The name of hub virtual network.')
+output hubVNetName string = hub.outputs.hubVnetName
+
 @description('The name of the Hub resource group.')
 output hubResourceGroupName string = hub.outputs.resourceGroupName
 
@@ -281,12 +300,21 @@ output spokeApplicationGatewaySubnetId string = spoke.outputs.spokeApplicationGa
 @description('The name of the Spoke Application Gateway Subnet.  If "spokeApplicationGatewaySubnetAddressPrefix" is empty, the subnet will not be created and the value returned is empty.')
 output spokeApplicationGatewaySubnetName string = spoke.outputs.spokeApplicationGatewaySubnetName
 
+@description('The resource ID of the Log Analytics workspace created in the spoke vnet.')
+output logAnalyticsWorkspaceId string = spoke.outputs.logAnalyticsWorkspaceId
+
+@description('The name of the jump box virtual machine')
+output vmJumpBoxName string = spoke.outputs.vmJumpBoxName
+
 // Supporting Services
 @description('The resource ID of the container registry.')
 output containerRegistryId string = supportingServices.outputs.containerRegistryId
 
 @description('The name of the container registry.')
 output containerRegistryName string = supportingServices.outputs.containerRegistryName
+
+@description('The name of the container registry login server.')
+output containerRegistryLoginServer string = supportingServices.outputs.containerRegistryLoginServer
 
 @description('The resource ID of the user assigned managed identity for the container registry to be able to pull images from it.')
 output containerRegistryUserAssignedIdentityId string = supportingServices.outputs.containerRegistryUserAssignedIdentityId
@@ -297,9 +325,15 @@ output keyVaultId string = supportingServices.outputs.keyVaultId
 @description('The name of the key vault.')
 output keyVaultName string = supportingServices.outputs.keyVaultName
 
+@description('The name of the Azure Open AI account name.')
+output openAIAccountName string = (deployOpenAi)? supportingServices.outputs.openAIAccountName : ''
+
 // Container Apps Environment
 @description('The resource ID of the container apps environment.')
 output containerAppsEnvironmentId string = containerAppsEnvironment.outputs.containerAppsEnvironmentId
 
 @description('The name of the container apps environment.')
 output containerAppsEnvironmentName string = containerAppsEnvironment.outputs.containerAppsEnvironmentName
+
+@description(' The name of application Insights instance.')
+output applicationInsightsName string =  (enableApplicationInsights)? containerAppsEnvironment.outputs.applicationInsightsName : ''
